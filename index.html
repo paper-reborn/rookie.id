@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reborn Rookie — Bank Sampah Kertas Mahasiswa</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fraunces:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  /* ================= VARIABEL WARNA ================= */
+  :root {
+    --bg: #f4f1ea; --ink: #1f2419; --ink-soft: #4a5240;
+    --muted: #8a8f7e; --line: #e2dccc; --accent: #3d5a3d; --accent-hover: #2b422b;
+    --accent-light: #e8ede8; --gold: #c9a961; --shadow: 0 4px 20px rgba(0,0,0,0.05);
+    --font-body: 'Plus Jakarta Sans', sans-serif; --font-display: 'Fraunces', serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--ink); height: 100vh; overflow: hidden; }
+  a { text-decoration: none; color: inherit; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  ul { list-style: none; }
+  img { max-width: 100%; display: block; }
+
+  /* ================= HALAMAN 1: LOGIN ================= */
+  #loginPage {
+    position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    background-image: linear-gradient(to bottom, rgba(247,244,238, 0.85), rgba(247,244,238, 0.95)), url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=1920&auto=format&fit=crop');
+    background-size: cover; background-position: center; padding: 2rem 1rem; z-index: 9999;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+  }
+  .login-card {
+    background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px);
+    width: 100%; max-width: 420px; padding: 2.5rem 2rem;
+    border-radius: 20px; box-shadow: 0 10px 30px rgba(31,36,25,.1);
+    animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .brand { text-align: center; margin-bottom: 2rem; }
+  .brand-logo { font-size: 1.8rem; font-weight: 700; color: var(--ink); display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.2rem; font-family: var(--font-display); }
+  .brand-icon { width: 42px; height: 42px; background: var(--accent); color: #fff; border-radius: 12px; display: grid; place-items: center; font-size: 1.2rem; }
+  .brand-tagline { font-size: 0.75rem; color: var(--muted); font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1.5rem; }
+  .brand-subtitle { font-size: 1.1rem; font-weight: 600; color: var(--ink); }
+  .form-group { margin-bottom: 1.2rem; }
+  .form-label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--ink-soft); margin-bottom: 0.5rem; }
+  .label-row { display: flex; justify-content: space-between; align-items: center; }
+  .forgot-link { font-size: 0.8rem; font-weight: 600; color: var(--accent); text-decoration: none; }
+  .input-wrap { position: relative; }
+  .form-input { width: 100%; padding: 0.9rem 1rem; border: 1.5px solid var(--line); border-radius: 10px; font-family: inherit; font-size: 0.9rem; outline: none; transition: all 0.3s; }
+  .form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(61, 90, 61, 0.1); }
+  .toggle-password { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--muted); cursor: pointer; }
+  .btn-submit { width: 100%; padding: 0.9rem; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s; margin-top: 0.5rem; }
+  .btn-submit:hover { background: var(--accent-hover); transform: translateY(-2px); }
+  .footer-text { text-align: center; margin-top: 2rem; font-size: 0.85rem; color: var(--ink-soft); }
+  .footer-text a { color: var(--accent); font-weight: 700; text-decoration: none; }
+
+  /* ================= HALAMAN 2: DASHBOARD ================= */
+  #dashboardPage { display: none; height: 100vh; flex-direction: column; background: var(--bg); }
+
+  /* --- Topbar (Header Atas) --- */
+  .topbar { background: #fff; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--line); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+  .topbar-brand { display: flex; align-items: center; gap: .8rem; }
+  .topbar-brand .brand-icon { width: 38px; height: 38px; font-size: 1.1rem; border-radius: 10px; }
+  .topbar-text-wrap { display: flex; flex-direction: column; }
+  .topbar-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; line-height: 1.1; }
+  .topbar-subtitle { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500; }
+  
+  /* --- Tombol Garis Tiga --- */
+  .btn-menu { width: 42px; height: 42px; border-radius: 50%; background: var(--bg); display: grid; place-items: center; font-size: 1.2rem; color: var(--ink); transition: 0.3s; border: 1px solid var(--line); }
+  .btn-menu:hover { background: var(--accent); color: #fff; }
+
+  /* --- Sidebar Kanan --- */
+  .sidebar-right { position: fixed; top: 0; right: -300px; width: 280px; height: 100vh; background: #fff; z-index: 200; box-shadow: -5px 0 30px rgba(0,0,0,0.1); transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; padding: 2rem 1.5rem; }
+  .sidebar-right.open { right: 0; }
+  .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid var(--line); padding-bottom: 1rem; }
+  .sidebar-header h3 { font-family: var(--font-display); font-size: 1.2rem; }
+  .btn-close { font-size: 1.2rem; color: var(--muted); cursor: pointer; transition: 0.3s; }
+  .btn-close:hover { color: #d9534f; transform: rotate(90deg); }
+  .nav-menu { flex: 1; display: flex; flex-direction: column; gap: .5rem; }
+  .nav-item { display: flex; align-items: center; gap: .8rem; padding: .9rem 1rem; border-radius: 10px; font-size: .95rem; font-weight: 500; color: var(--ink-soft); transition: 0.3s; cursor: pointer; }
+  .nav-item i { width: 24px; text-align: center; font-size: 1.1rem; }
+  .nav-item:hover { background: var(--bg); color: var(--accent); padding-left: 1.2rem; }
+  .nav-item.active { background: var(--accent); color: #fff; }
+  .nav-item.logout { color: #d9534f; margin-top: auto; border: 1px solid #fce4e4; background: #fff5f5; }
+  .nav-item.logout:hover { background: #fce4e4; }
+  .overlay { position: fixed; inset: 0; background: rgba(31,36,25,0.5); backdrop-filter: blur(2px); z-index: 150; opacity: 0; visibility: hidden; transition: 0.3s; }
+  .overlay.show { opacity: 1; visibility: visible; }
+
+  /* --- Konten Utama --- */
+  .main-content { flex: 1; overflow-y: auto; padding: 2rem; }
+  .container { max-width: 1000px; margin: 0 auto; width: 100%; }
+
+  /* Halaman Beranda */
+  #pageBeranda { animation: fadeIn 0.5s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .hero-banner { background: linear-gradient(135deg, #2b6b6b, #1a4545); border-radius: 20px; padding: 3rem; color: #fff; margin-bottom: 2.5rem; display: flex; justify-content: space-between; align-items: center; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(43,107,107,0.2); }
+  .hero-text { position: relative; z-index: 1; max-width: 60%; }
+  .hero-text h2 { font-family: var(--font-display); font-size: 2.2rem; margin-bottom: .8rem; line-height: 1.2; }
+  .hero-text p { font-size: 1rem; opacity: .9; margin-bottom: 1.5rem; }
+  .btn-hero { background: var(--gold); color: #2b2410; padding: .8rem 1.5rem; border-radius: 100px; font-weight: 700; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.5rem; transition: 0.3s; }
+  .btn-hero:hover { background: #dfb96d; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(201,169,97,0.4); }
+  .hero-img-wrap { position: relative; z-index: 1; }
+  .hero-img { width: 200px; border-radius: 12px; border: 4px solid #fff; transform: rotate(4deg); box-shadow: 0 15px 25px rgba(0,0,0,0.2); }
+  .section-head { margin-bottom: 1.5rem; }
+  .section-head h3 { font-family: var(--font-display); font-size: 1.6rem; color: var(--ink); margin-bottom: 0.3rem; }
+  .section-head p { font-size: 0.9rem; color: var(--muted); }
+  .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 3rem; }
+  .price-card { background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow); transition: 0.3s; display: flex; flex-direction: column; }
+  .price-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+  .price-img { height: 160px; width: 100%; object-fit: cover; }
+  .price-body { padding: 1.5rem; text-align: center; }
+  .price-body h4 { font-size: 1.1rem; margin-bottom: 0.3rem; }
+  .price-body p { font-size: 0.8rem; color: var(--muted); margin-bottom: 1rem; }
+  .price-tag { font-size: 1.5rem; font-weight: 700; color: var(--accent); font-family: var(--font-display); }
+  .price-tag span { font-size: 0.85rem; font-family: var(--font-body); color: var(--ink-soft); font-weight: 500; }
+  .info-box { background: #fff; border: 1px solid var(--line); padding: 1.5rem; border-radius: 16px; display: flex; gap: 1.2rem; align-items: center; }
+  .info-icon { width: 55px; height: 55px; background: var(--accent-light); border-radius: 50%; display: grid; place-items: center; color: var(--accent); font-size: 1.6rem; flex-shrink: 0; }
+  .info-text h4 { font-size: 1.05rem; margin-bottom: .3rem; }
+  .info-text p { font-size: 0.88rem; color: var(--ink-soft); line-height: 1.5; }
+
+  /* Halaman Form (Setor) */
+  #pageForm { display: none; animation: fadeIn 0.5s ease; }
+  .form-card { background: #fff; padding: 2.5rem; border-radius: 20px; border: 1px solid var(--line); box-shadow: var(--shadow); max-width: 750px; margin: 0 auto; }
+  .form-card h2 { font-family: var(--font-display); margin-bottom: 0.5rem; color: var(--accent); font-size: 1.8rem; }
+  .form-card > p { font-size: 0.9rem; color: var(--muted); margin-bottom: 2rem; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+  .form-group-full { margin-bottom: 1.5rem; }
+  .form-label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: .5rem; }
+  .form-input, .form-select { width: 100%; padding: .9rem; border: 1.5px solid var(--line); border-radius: 10px; font-family: inherit; font-size: .9rem; outline: none; transition: 0.3s; background: var(--bg); }
+  .form-input:focus, .form-select:focus { border-color: var(--accent); background: #fff; }
+  .total-box { background: var(--accent-light); padding: 1.5rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border: 1px dashed var(--accent); }
+  .total-box h4 { font-size: 1rem; color: var(--ink-soft); }
+  .total-price { font-size: 2rem; font-weight: 700; color: var(--accent); font-family: var(--font-display); }
+  .btn-submit-wide { width: 100%; padding: 1rem; background: var(--accent); color: #fff; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 1rem; transition: 0.3s; }
+  .btn-submit-wide:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(61,90,61,0.3); }
+
+  /* --- KONTEN BARU: DOMPET DIGITAL --- */
+  #pageDompet { display: none; animation: fadeIn 0.5s ease; }
+  .wallet-card { background: linear-gradient(135deg, var(--accent), #1a4545); border-radius: 20px; padding: 2.5rem; color: #fff; margin-bottom: 2rem; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(43,107,107,0.2); }
+  .wallet-card::before { content: ''; position: absolute; top: -50%; right: -10%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,255,255,.1), transparent 70%); border-radius: 50%; }
+  .wallet-title { font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.5rem; letter-spacing: 1px; text-transform: uppercase; }
+  .wallet-balance { font-size: 3rem; font-weight: 700; font-family: var(--font-display); margin-bottom: 1rem; }
+  .wallet-sub { display: flex; gap: 2rem; font-size: 0.85rem; }
+  .wallet-sub b { font-size: 1.1rem; display: block; margin-top: 0.2rem; }
+  .btn-withdraw { background: var(--gold); color: #2b2410; padding: 0.8rem 1.5rem; border-radius: 100px; font-weight: 700; font-size: 0.9rem; margin-top: 1.5rem; display: inline-flex; align-items: center; gap: 0.5rem; transition: 0.3s; }
+  .btn-withdraw:hover { background: #dfb96d; transform: translateY(-2px); }
+  
+  .history-title { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 1rem; }
+  .history-card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 1.2rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
+  .history-info h4 { font-size: 1rem; margin-bottom: 0.2rem; }
+  .history-info p { font-size: 0.8rem; color: var(--muted); }
+  .history-status { font-size: 0.8rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 100px; }
+  .status-pending { background: #fff3cd; color: #856404; }
+  .status-success { background: var(--accent-light); color: var(--accent); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero-banner { flex-direction: column; padding: 2rem; text-align: center; }
+    .hero-text { max-width: 100%; margin-bottom: 2rem; } .hero-img { width: 150px; }
+    .price-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .main-content { padding: 1.5rem; }
+    .wallet-balance { font-size: 2.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= HALAMAN 1: LOGIN ================= -->
+<div id="loginPage">
+  <div class="login-card">
+    <div class="brand">
+      <div class="brand-logo"><div class="brand-icon"><i class="fa-solid fa-seedling"></i></div> Reborn Rookie</div>
+      <div class="brand-tagline">Kertas Bekas · Kisah Baru</div>
+      <div class="brand-subtitle">Masuk ke akun Anda</div>
+    </div>
+    
+    <form onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label class="form-label">Email Mahasiswa</label>
+        <input type="email" class="form-input" placeholder="nama@student.unm.ac.id" required>
+      </div>
+      <div class="form-group">
+        <div class="label-row">
+          <label class="form-label">Kata Sandi</label>
+          <a href="#" class="forgot-link">Lupa Kata Sandi?</a>
+        </div>
+        <div class="input-wrap">
+          <input type="password" id="passInput" class="form-input" placeholder="Masukkan kata sandi" required>
+          <button type="button" class="toggle-password" onclick="togglePass()"><i class="fa-regular fa-eye" id="eyeIcon"></i></button>
+        </div>
+      </div>
+      <button type="submit" class="btn-submit">Masuk</button>
+    </form>
+    <div class="footer-text">Belum punya akun? <a href="#">Daftar</a></div>
+  </div>
+</div>
+
+<!-- ================= HALAMAN 2: DASHBOARD ================= -->
+<div id="dashboardPage">
+  
+  <header class="topbar">
+    <div class="topbar-brand">
+      <div class="brand-icon"><i class="fa-solid fa-seedling"></i></div> 
+      <div class="topbar-text-wrap">
+        <span class="topbar-title">Reborn Rookie</span>
+        <span class="topbar-subtitle">Kertas Bekas · Kisah Baru</span>
+      </div>
+    </div>
+    <button class="btn-menu" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
+  </header>
+
+  <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+  <!-- Sidebar Kanan -->
+  <aside class="sidebar-right" id="sidebarRight">
+    <div class="sidebar-header">
+      <h3>Menu</h3>
+      <i class="fa-solid fa-xmark btn-close" onclick="toggleMenu()"></i>
+    </div>
+    <nav class="nav-menu">
+      <!-- Menu diupdate -->
+      <div class="nav-item active" id="menuBeranda" onclick="showPage('beranda', this)"><i class="fa-solid fa-house"></i> Beranda</div>
+      <div class="nav-item" id="menuDompet" onclick="showPage('dompet', this)"><i class="fa-solid fa-wallet"></i> Dompet Saya</div>
+      <div class="nav-item" onclick="alert('Halaman Profil akan segera hadir!')"><i class="fa-regular fa-user"></i> Profil Saya</div>
+      <div class="nav-item" onclick="alert('Halaman Statistik Dampak Lingkungan akan segera hadir!')"><i class="fa-solid fa-chart-pie"></i> Statistik Dampak</div>
+      <div class="nav-item" onclick="alert('Pusat Bantuan akan segera hadir!')"><i class="fa-regular fa-circle-question"></i> Pusat Bantuan</div>
+      
+      <div class="nav-item logout" onclick="handleLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Keluar Akun</div>
+    </nav>
+  </aside>
+
+  <!-- Area Konten Utama -->
+  <main class="main-content">
+    <div class="container">
+      
+      <!-- ================= KONTEN: BERANDA ================= -->
+      <div id="pageBeranda">
+        <div class="hero-banner">
+          <div class="hero-text">
+            <h2>Ubah Kertas Bekasmu Jadi Cuan! 💸</h2>
+            <p>Jangan buang tugas atau makalah lamamu. Setorkan ke Reborn Rookie dan dapatkan saldo yang bisa dicairkan ke rekeningmu.</p>
+            <button class="btn-hero" onclick="bukaFormSetor()"><i class="fa-solid fa-hand-holding-dollar"></i> Setor Sekarang</button>
+          </div>
+          <div class="hero-img-wrap">
+            <img src="https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=400&q=80" class="hero-img" alt="Kertas">
+          </div>
+        </div>
+
+        <div class="section-head">
+          <h3>Daftar Harga Beli Kertas</h3>
+          <p>Harga dapat berubah sewaktu-waktu. Pastikan kertas dalam kondisi kering.</p>
+        </div>
+        
+        <div class="price-grid">
+          <div class="price-card">
+            <img src="images.jpg" class="price-img" alt="Kertas HVS Putih">
+            <div class="price-body">
+              <h4>Kertas HVS Putih</h4>
+              <p>Bersih, tidak terlalu kusut</p>
+              <div class="price-tag">Rp 2.500 <span>/kg</span></div>
+            </div>
+          </div>
+          <div class="price-card">
+            <img src="web-3.png" class="price-img" alt="Kardus Karton">
+            <div class="price-body">
+              <h4>Kardus & Karton</h4>
+              <p>Kardus bekas, karton tebal</p>
+              <div class="price-tag">Rp 1.500 <span>/kg</span></div>
+            </div>
+          </div>
+          <div class="price-card">
+            <img src="Campuran-Kertas-Mix (1).webp" class="price-img" alt="Kertas Campuran">
+            <div class="price-body">
+              <h4>Kertas Campuran</h4>
+              <p>Kertas berwarna, majalah, koran</p>
+              <div class="price-tag">Rp 1.000 <span>/kg</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-icon"><i class="fa-solid fa-leaf"></i></div>
+          <div class="info-text">
+            <h4>Berdasarkan Data Limbah Kampus</h4>
+            <p>Kardus & Karton menyumbang 66% dari total limbah kertas kampus. Mari kita kelola bersama untuk lingkungan yang lebih hijau!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= KONTEN: FORM SETOR ================= -->
+      <div id="pageForm">
+        <div class="form-card">
+          <button onclick="kembaliKeBeranda()" style="background:none; border:none; color:var(--muted); cursor:pointer; margin-bottom:1rem; font-weight:600;"><i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda</button>
+          
+          <h2>Formulir Setor Kertas</h2>
+          <p>Isi data di bawah ini. Tim kami akan menghubungimu via WhatsApp untuk penjemputan/penimbangan.</p>
+          
+          <form onsubmit="handleSetor(event)">
+            <div class="form-row">
+              <div>
+                <label class="form-label">Nama Lengkap</label>
+                <input type="text" id="namaPenyetor" class="form-input" placeholder="Nama Kamu" required>
+              </div>
+              <div>
+                <label class="form-label">Nomor WhatsApp</label>
+                <input type="tel" id="hpPenyetor" class="form-input" placeholder="08xxxxxxx" required>
+              </div>
+            </div>
+
+            <div class="form-group-full">
+              <label class="form-label">Pilih Jenis Kertas</label>
+              <select class="form-select" id="jenisKertas" onchange="hitungTotal()" required>
+                <option value="0">-- Pilih Jenis --</option>
+                <option value="2500">HVS Putih (Rp 2.500/kg)</option>
+                <option value="1500">Kardus & Karton (Rp 1.500/kg)</option>
+                <option value="1000">Kertas Campuran (Rp 1.000/kg)</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <div>
+                <label class="form-label">Estimasi Berat (Kg)</label>
+                <input type="number" id="beratKertas" class="form-input" placeholder="Contoh: 5" min="1" oninput="hitungTotal()" required>
+              </div>
+              <div>
+                <label class="form-label">Metode Penyerahan</label>
+                <select class="form-select" id="metodePenyerahan" required>
+                  <option>Antar ke Basecamp Kampus</option>
+                  <option>Minta Dijemput (Min. 5 Kg)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="total-box">
+              <h4>Estimasi Pendapatan:</h4>
+              <div class="total-price" id="totalHarga">Rp 0</div>
+            </div>
+
+            <button type="submit" class="btn-submit-wide"><i class="fa-brands fa-whatsapp"></i> Ajukan Setoran & Masukkan ke Dompet</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ================= KONTEN: DOMPET SAYA (BARU) ================= -->
+      <div id="pageDompet">
+        <div class="wallet-card">
+          <div class="wallet-title">Total Saldo Kamu</div>
+          <div class="wallet-balance" id="saldoUtama">Rp 0</div>
+          
+          <div class="wallet-sub">
+            <div>
+              Saldo Tertunda
+              <b id="saldoPending">Rp 0</b>
+            </div>
+            <div>
+              Siap Dicairkan
+              <b id="saldoSiap">Rp 0</b>
+            </div>
+          </div>
+          
+          <button class="btn-withdraw" onclick="tarikSaldo()"><i class="fa-solid fa-money-bill-transfer"></i> Cairkan ke Bank/E-Wallet</button>
+        </div>
+
+        <h3 class="history-title">Riwayat Transaksi</h3>
+        <div id="listRiwayat">
+          <!-- Riwayat akan muncul di sini lewat JS -->
+          <div class="history-card">
+            <div class="history-info">
+              <h4>Belum ada transaksi</h4>
+              <p>Silakan setor kertas bekasmu terlebih dahulu.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ================= JAVASCRIPT ================= -->
+<script>
+  // --- SIMULASI DATABASE LOCALSTORAGE ---
+  // Kita buat variabel saldo awal (bisa di-reset dengan tombol logout)
+  let saldoPending = parseInt(localStorage.getItem('saldoPending')) || 0;
+  let saldoSiap = parseInt(localStorage.getItem('saldoSiap')) || 0;
+
+  function updateTampilanSaldo() {
+    const total = saldoPending + saldoSiap;
+    
+    // Format ke Rupiah
+    document.getElementById('saldoUtama').innerText = 'Rp ' + total.toLocaleString('id-ID');
+    document.getElementById('saldoPending').innerText = 'Rp ' + saldoPending.toLocaleString('id-ID');
+    document.getElementById('saldoSiap').innerText = 'Rp ' + saldoSiap.toLocaleString('id-ID');
+    
+    // Simpan ke localStorage
+    localStorage.setItem('saldoPending', saldoPending);
+    localStorage.setItem('saldoSiap', saldoSiap);
+  }
+
+  // Panggil saat pertama kali load
+  updateTampilanSaldo();
+
+  // 1. Fitur Login & Logout
+  function togglePass() {
+    const input = document.getElementById('passInput');
+    const icon = document.getElementById('eyeIcon');
+    if (input.type === 'password') { input.type = 'text'; icon.classList.replace('fa-eye', 'fa-eye-slash'); }
+    else { input.type = 'password'; icon.classList.replace('fa-eye-slash', 'fa-eye'); }
+  }
+
+  function handleLogin(e) {
+    if(e) e.preventDefault();
+    const loginPage = document.getElementById('loginPage');
+    const dashboardPage = document.getElementById('dashboardPage');
+    
+    loginPage.style.opacity = '0';
+    loginPage.style.visibility = 'hidden';
+    
+    setTimeout(() => { dashboardPage.style.display = 'flex'; }, 300);
+    updateTampilanSaldo(); // Update saldo saat login
+  }
+
+  function handleLogout() {
+    if(confirm('Apakah kamu yakin ingin keluar?')) {
+      document.getElementById('dashboardPage').style.display = 'none';
+      const login = document.getElementById('loginPage');
+      login.style.visibility = 'visible';
+      login.style.opacity = '1';
+      document.querySelector('form').reset();
+      // Tutup menu sidebar jika terbuka
+      document.getElementById('sidebarRight').classList.remove('open');
+      document.getElementById('overlay').classList.remove('show');
+      
+      // Pindah ke halaman beranda saat logout
+      showPage('beranda', document.getElementById('menuBeranda'));
+    }
+  }
+
+  // 2. Fitur Buka/Tutup Menu Garis Tiga (Sidebar Kanan)
+  function toggleMenu() {
+    const sidebar = document.getElementById('sidebarRight');
+    const overlay = document.getElementById('overlay');
+    
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('show');
+  }
+
+  // 3. Navigasi Halaman (Beranda, Form, Dompet)
+  function bukaFormSetor() {
+    document.getElementById('pageBeranda').style.display = 'none';
+    document.getElementById('pageDompet').style.display = 'none';
+    document.getElementById('pageForm').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    toggleMenu(); // Tutup menu jika dibuka dari sidebar
+  }
+
+  function kembaliKeBeranda() {
+    document.getElementById('pageForm').style.display = 'none';
+    document.getElementById('pageDompet').style.display = 'none';
+    document.getElementById('pageBeranda').style.display = 'block';
+  }
+
+  function showPage(page, element) {
+    // Sembunyikan semua halaman
+    document.getElementById('pageBeranda').style.display = 'none';
+    document.getElementById('pageForm').style.display = 'none';
+    document.getElementById('pageDompet').style.display = 'none';
+    
+    // Hapus kelas active dari semua menu
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    
+    // Tampilkan halaman yang dipilih
+    if (page === 'beranda') {
+      document.getElementById('pageBeranda').style.display = 'block';
+      element.classList.add('active');
+    } else if (page === 'dompet') {
+      document.getElementById('pageDompet').style.display = 'block';
+      element.classList.add('active');
+      renderRiwayat(); // Panggil fungsi render riwayat
+    }
+    
+    toggleMenu(); // Otomatis tutup menu setelah dipilih
+  }
+
+  // 4. Fitur Hitung Otomatis Total Harga di Form
+  function hitungTotal() {
+    const hargaPerKg = document.getElementById('jenisKertas').value;
+    const berat = document.getElementById('beratKertas').value;
+    const totalDisplay = document.getElementById('totalHarga');
+
+    if (hargaPerKg > 0 && berat > 0) {
+      const total = hargaPerKg * berat;
+      totalDisplay.innerText = 'Rp ' + total.toLocaleString('id-ID');
+      return total; // Kembalikan nilai total
+    } else {
+      totalDisplay.innerText = 'Rp 0';
+      return 0;
+    }
+  }
+
+  // 5. Fungsi Kirim Data ke WhatsApp & Tambah Saldo
+  function handleSetor(e) {
+    e.preventDefault();
+    
+    const nomorWA = "6282194693998"; 
+    const nama = document.getElementById('namaPenyetor').value;
+    const noHP = document.getElementById('hpPenyetor').value;
+    const jenisSelect = document.getElementById('jenisKertas');
+    const jenisTeks = jenisSelect.options[jenisSelect.selectedIndex].text;
+    const berat = document.getElementById('beratKertas').value;
+    const metode = document.getElementById('metodePenyerahan').value;
+    
+    // Ambil nominal total angka
+    const hargaPerKg = parseInt(jenisSelect.value);
+    const nominalTotal = hargaPerKg * parseInt(berat);
+    const totalHargaStr = 'Rp ' + nominalTotal.toLocaleString('id-ID');
+
+    // --- PROSES TAMBAH SALDO KE DOMPET ---
+    saldoPending += nominalTotal;
+    updateTampilanSaldo();
+
+    // Simpan riwayat ke LocalStorage
+    let riwayat = JSON.parse(localStorage.getItem('riwayatTransaksi')) || [];
+    riwayat.unshift({
+      tanggal: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+      jenis: jenisTeks,
+      berat: berat + ' kg',
+      nominal: nominalTotal,
+      status: 'Tertunda'
+    });
+    localStorage.setItem('riwayatTransaksi', JSON.stringify(riwayat));
+
+    // --- BUKA WHATSAPP ---
+    const pesan = `Halo Reborn Rookie! 👋%0A%0ASaya ingin menyetor kertas bekas:%0A%0A*Nama:* ${nama}%0A*No. HP:* ${noHP}%0A*Jenis Kertas:* ${jenisTeks}%0A*Estimasi Berat:* ${berat} kg%0A*Metode:* ${metode}%0A%0A*Estimasi Pendapatan:* ${totalHargaStr}%0A%0AMohon konfirmasi untuk penjemputan/penimbangan. Terima kasih!`;
+    const urlWA = `https://wa.me/${nomorWA}?text=${pesan}`;
+    window.open(urlWA, '_blank');
+
+    // Kembalikan halaman ke beranda dan kosongkan form
+    e.target.reset();
+    document.getElementById('totalHarga').innerText = 'Rp 0';
+    
+    // Pindah ke halaman dompet agar user melihat saldonya bertambah
+    showPage('dompet', document.getElementById('menuDompet'));
+  }
+
+  // 6. Fungsi Tampilkan Riwayat Transaksi
+  function renderRiwayat() {
+    const list = document.getElementById('listRiwayat');
+    let riwayat = JSON.parse(localStorage.getItem('riwayatTransaksi')) || [];
+    
+    if (riwayat.length === 0) {
+      list.innerHTML = `
+        <div class="history-card">
+          <div class="history-info">
+            <h4>Belum ada transaksi</h4>
+            <p>Silakan setor kertas bekasmu terlebih dahulu.</p>
+          </div>
+        </div>`;
+      return;
+    }
+
+    list.innerHTML = '';
+    riwayat.forEach(item => {
+      // Tentukan warna status
+      let statusClass = item.status === 'Tertunda' ? 'status-pending' : 'status-success';
+      
+      list.innerHTML += `
+        <div class="history-card">
+          <div class="history-info">
+            <h4>${item.jenis} (${item.berat})</h4>
+            <p>${item.tanggal}</p>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-weight: 700; color: var(--accent);">Rp ${item.nominal.toLocaleString('id-ID')}</div>
+            <div class="history-status ${statusClass}">${item.status}</div>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  // 7. Fungsi Tarik Saldo (Simulasi)
+  function tarikSaldo() {
+    if (saldoSiap === 0) {
+      alert('Saldo yang siap dicairkan masih Rp 0. Pastikan kertasmu sudah ditimbang oleh tim kami ya!');
+      return;
+    }
+    
+    if(confirm(`Apakah kamu yakin ingin mencairkan saldo sebesar Rp ${saldoSiap.toLocaleString('id-ID')} ke rekening bank/e-wallet kamu?`)) {
+      alert('✅ Penarikan Berhasil!\n\nDana akan ditransfer ke rekeningmu dalam waktu 1x24 jam (Simulasi).');
+      
+      // Pindahkan saldo siap menjadi 0 (dianggap sudah dicairkan)
+      saldoSiap = 0;
+      updateTampilanSaldo();
+      
+      // Update status di riwayat (opsional, jika mau semua berubah jadi Selesai)
+      let riwayat = JSON.parse(localStorage.getItem('riwayatTransaksi')) || [];
+      riwayat.forEach(item => item.status = 'Selesai');
+      localStorage.setItem('riwayatTransaksi', JSON.stringify(riwayat));
+      renderRiwayat();
+    }
+  }
+
+  // Simulasi otomatis: Setelah 5 detik login, saldo tertunda pindah ke siap cair
+  // (Ini hanya untuk presentasi agar dosen bisa lihat perubahannya)
+  function simulasiVerifikasiAdmin() {
+    if (saldoPending > 0) {
+      saldoSiap += saldoPending;
+      saldoPending = 0;
+      updateTampilanSaldo();
+      
+      let riwayat = JSON.parse(localStorage.getItem('riwayatTransaksi')) || [];
+      riwayat.forEach(item => item.status = 'Selesai');
+      localStorage.setItem('riwayatTransaksi', JSON.stringify(riwayat));
+      
+      if (document.getElementById('pageDompet').style.display === 'block') {
+         renderRiwayat();
+      }
+    }
+  }
+  
+  // Panggil simulasi setiap 15 detik (biar presentasi terlihat ada "proses admin")
+  setInterval(simulasiVerifikasiAdmin, 15000);
+
+</script>
+</body>
+</html>
